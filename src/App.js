@@ -1,22 +1,40 @@
-import logo from './logo.svg';
 import './App.css';
+import styled from 'styled-components'
+import axios from 'axios'
+
+const Button = styled.button`
+  
+`
 
 function App() {
+
+  const onChangeColor = async () => {
+
+    const result = await axios.get("/api",
+    {
+      header: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization, Accept, Accept-Language, X-Authorization"
+      }
+    })
+
+    .then(response => {
+        console.log("Success =>", response.data);
+    })
+    .catch(error => {
+        console.log("Error =>", error);
+     })
+
+     console.log("Result ", result)
+  }
+
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <Button onClick={onChangeColor}>
+          Change color
+        </Button>
       </header>
     </div>
   );
