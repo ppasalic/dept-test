@@ -4,7 +4,7 @@ module.exports = app => {
     app.use(
         "/api",
         createProxyMiddleware({
-            target: "http://www.colr.org/json/color/random",
+            target: "https://www.colr.org/json/color/random",
             changeOrigin: true,
             secure: false
           })
