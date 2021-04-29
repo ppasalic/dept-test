@@ -35,22 +35,17 @@ function App() {
         
         console.log(response.data.colors[0].hex)
 
-        e.target.style.color = response.data.colors[0].hex
+        e.target.style.color = "#"+response.data.colors[0].hex
 
-        if(!listOfColors.includes(response.data.colors[0].hex))
+        if(!listOfColors.includes("#"+response.data.colors[0].hex))
         {
-          setColor(...listOfColors, response.data.colors[0].hex)
+          setColor([...listOfColors, "#" + response.data.colors[0].hex])
         }
     })
     .catch(error => {
         console.log("Error =>", error);
     })
   }
-  
-
-  useEffect(() => {
-   
-  }, [])
 
   return (
     <div className="App">
@@ -60,8 +55,8 @@ function App() {
         </Button>
         <List>
           { listOfColors !== undefined ? listOfColors.map(c =>
-            <li style={{itemColor: c}} >{"" + c}</li>)
-           : <></> }
+            <li style={{color: c}} >{c}</li>)
+           : <></> } 
         </List>
       </header>
     </div>
