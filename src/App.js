@@ -2,6 +2,7 @@ import './App.css';
 import styled from 'styled-components'
 import axios from 'axios'
 import { useEffect, useState } from "react"
+import apiFetch from './FetchApi'
 
 const Button = styled.button`
   color: #fff;
@@ -22,41 +23,53 @@ const List = styled.ul`
   padding-top: 50px;
   text-align: left;
 `
+const CACHE = {};
 
 function App() {
-  let [listOfColors, setColor] = useState([]);
+  const [listOfColors, setColor] = useState([]);
+  const [loading, setLoading] = useState(false)
   
-  const onChangeColor = (e) => {
-    
-    axios.get("https://www.colr.org/json/color/random",
-    { crossdomain: true })
-    .then(response => {
-        console.log("Success =>", response.data);
-        
-        console.log(response.data.colors[0].hex)
+  const getColor = () => {
+    if (CACHE[listOfColors] !== undefined) {
+     setColor(listOfColors)
+    }
+    apiFetch(`https://www.colr.org/json/color/random`, { cache: "no-cache" })
+    .then(
+    response => {
 
-        e.target.style.color = "#"+response.data.colors[0].hex
+        console.log("RESPONSE ", response)
+        const currrentColor =  "#" + response.colors[0].hex
 
-        if(!listOfColors.includes("#"+response.data.colors[0].hex))
+        CACHE[listOfColors] =  currrentColor
+
+        document.getElementById("button-color").style.color = currrentColor
+
+        if(!listOfColors.includes(currrentColor))
         {
-          setColor([...listOfColors, "#" + response.data.colors[0].hex])
+          setColor([...listOfColors, currrentColor])
+        
         }
-    })
-    .catch(error => {
-        console.log("Error =>", error);
-    })
+
+
+      }
+    );
   }
+
+  useEffect(() =>  {
+    console.log("LIST OF COLORS, ", listOfColors)
+    
+  })
 
   return (
     <div className="App">
       <header className="App-header">
-        <Button id="button-color" onClick={onChangeColor} >
+        <Button id="button-color" onClick={getColor} >
           Change color
         </Button>
         <List>
-          { listOfColors !== undefined ? listOfColors.map(c =>
-            <li style={{color: c}} >{c}</li>)
-           : <></> } 
+          { listOfColors && listOfColors.map(c =>
+            <li key={c} style={{color: c}} >{c}</li>)
+           } 
         </List>
       </header>
     </div>
