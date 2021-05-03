@@ -27,6 +27,11 @@ const List = styled.ul`
     width: fit-content;
   }
 `
+
+const Input = styled.input`
+  width: 200px;
+`
+
 const CACHE = {};
 
 function App() {
@@ -73,17 +78,43 @@ function App() {
   };
   
   const handleDragLeave = (e) => {
-    e.target.style.backgroundColor = "black";
+    e.target.style.backgroundColor = "white";
   };
   
   const handleDrop = (e) => {
-    e.target.style.backgroundColor = "black";
+    e.target.style.backgroundColor = "white";
   };
 
   useEffect(() =>  {
     console.log("LIST OF COLORS, ", listOfColors)
     
   })
+
+  function onChange(){
+    var input = document.getElementById("input-color")
+    const regex = new RegExp("^#(?:[0-9a-fA-F]{3,4}){1,2}$")
+
+
+    input.addEventListener("keyup", function(e) {
+      if (e.keyCode === 13) {
+        e.preventDefault();
+        document.getElementById("button-color").innerHTML = input.value
+
+        console.log("VALUE ", input.value)
+        try{
+          if(regex.test(input.value))
+          {
+            setListOfColors([...listOfColors, input.value])
+
+          }
+        }
+        catch(error){
+          console.error()
+        }
+      }
+    }); 
+  }
+
 
   return (
     <div className="App">
@@ -106,6 +137,7 @@ function App() {
              >{c}</li>)
            } 
         </List>
+        <Input type="text" id="input-color" onChange={e => onChange(e)}/>
       </header>
     </div>
   );
