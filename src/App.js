@@ -22,16 +22,20 @@ const Button = styled.button`
 const List = styled.ul`
   padding-top: 50px;
   text-align: left;
+  li:last-child{
+    background-color: #FFFF00;
+    width: fit-content;
+  }
 `
 const CACHE = {};
 
 function App() {
-  const [listOfColors, setColor] = useState([]);
-  const [loading, setLoading] = useState(false)
+  const [listOfColors, setListOfColors] = useState([]);
+  const [dragItem, setDragItem] = useState();
   
   const getColor = () => {
     if (CACHE[listOfColors] !== undefined) {
-     setColor(listOfColors)
+     setListOfColors(listOfColors)
     }
     apiFetch(`https://www.colr.org/json/color/random`, { cache: "no-cache" })
     .then(
@@ -46,7 +50,7 @@ function App() {
 
         if(!listOfColors.includes(currrentColor))
         {
-          setColor([...listOfColors, currrentColor])
+          setListOfColors([...listOfColors, currrentColor])
         
         }
 
@@ -54,6 +58,27 @@ function App() {
       }
     );
   }
+
+  const handleDragStart = (index) => {
+    setDragItem(index);
+  };
+  
+  const handleDragEnter = (e, index) => {
+    const newList = [...listOfColors];
+    const item = newList[dragItem];
+    newList.splice(dragItem, 1);
+    newList.splice(index, 0, item);
+    setDragItem(index);
+    setListOfColors(newList);
+  };
+  
+  const handleDragLeave = (e) => {
+    e.target.style.backgroundColor = "black";
+  };
+  
+  const handleDrop = (e) => {
+    e.target.style.backgroundColor = "black";
+  };
 
   useEffect(() =>  {
     console.log("LIST OF COLORS, ", listOfColors)
@@ -67,8 +92,18 @@ function App() {
           Change color
         </Button>
         <List>
-          { listOfColors && listOfColors.map(c =>
-            <li key={c} style={{color: c}} >{c}</li>)
+          { listOfColors && listOfColors.map((c, index )=>
+            <li
+             draggable={true}
+             key={c} 
+             onDragStart={() => handleDragStart(index)}
+             onDragEnter={(e) => handleDragEnter(e, index)}
+             onDragLeave={(e) => handleDragLeave(e)}
+             onDrop={(e) => handleDrop(e)}
+             onDragOver={(e) => e.preventDefault()}
+             style={{color: c}} 
+             
+             >{c}</li>)
            } 
         </List>
       </header>
